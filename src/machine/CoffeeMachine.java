@@ -83,6 +83,7 @@ public class CoffeeMachine {
             System.out.println("Sorry, not enough disposable cups!");
             return false;
         }
+        System.out.println("I have enough resources, making you a coffee!");
         return true;
     }
 
@@ -110,7 +111,10 @@ public class CoffeeMachine {
     public enum Action {
         BUY,
         FILL,
-        TAKE;
+        TAKE,
+        REMAINING,
+        BACK,
+        EXIT;
 
         public static Action getActionByName(String name) {
             return Arrays.stream(values()).filter(action -> action.name().equalsIgnoreCase(name)).findFirst().orElseThrow();
@@ -121,36 +125,39 @@ public class CoffeeMachine {
         CoffeeMachine coffeeMachine = new CoffeeMachine();
         Scanner scanner = new Scanner(System.in);
 
-        coffeeMachine.printState();
-        System.out.println("Write action (buy, fill, take):");
-        Action action = Action.getActionByName(scanner.nextLine());
-
-        switch (action) {
-            case BUY:
-                System.out.println("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino, back - to main menu:");
-                String choice = scanner.nextLine();
-                if (!choice.equals("back")) {
-                    coffeeMachine.buy(CoffeeType.getTypeByChoice(Integer.parseInt(choice)));
-                }
-                break;
-            case FILL:
-                System.out.println("Write how many ml of water you want to add:");
-                int addWater = Integer.parseInt(scanner.nextLine());
-                System.out.println("Write how many ml of milk you want to add:");
-                int addMilk = Integer.parseInt(scanner.nextLine());
-                System.out.println("Write how many grams of coffee beans you want to add:");
-                int addBeans = Integer.parseInt(scanner.nextLine());
-                System.out.println("Write how many disposable cups you want to add:");
-                int addCups = Integer.parseInt(scanner.nextLine());
-                coffeeMachine.fill(addWater, addMilk, addBeans, addCups);
-                break;
-            case TAKE:
-                coffeeMachine.take();
-                break;
-            default:
-                System.out.println("Invalid action");
+        while (true) {
+            System.out.println("Write action (buy, fill, take, remaining, exit):");
+            Action action = Action.getActionByName(scanner.nextLine());
+            switch (action) {
+                case BUY:
+                    System.out.println("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino, back - to main menu:");
+                    String choice = scanner.nextLine();
+                    if (!choice.equalsIgnoreCase(Action.BACK.name())) {
+                        coffeeMachine.buy(CoffeeType.getTypeByChoice(Integer.parseInt(choice)));
+                    }
+                    break;
+                case FILL:
+                    System.out.println("Write how many ml of water you want to add:");
+                    int addWater = Integer.parseInt(scanner.nextLine());
+                    System.out.println("Write how many ml of milk you want to add:");
+                    int addMilk = Integer.parseInt(scanner.nextLine());
+                    System.out.println("Write how many grams of coffee beans you want to add:");
+                    int addBeans = Integer.parseInt(scanner.nextLine());
+                    System.out.println("Write how many disposable cups you want to add:");
+                    int addCups = Integer.parseInt(scanner.nextLine());
+                    coffeeMachine.fill(addWater, addMilk, addBeans, addCups);
+                    break;
+                case TAKE:
+                    coffeeMachine.take();
+                    break;
+                case REMAINING:
+                    coffeeMachine.printState();
+                    break;
+                case EXIT:
+                    return;
+                default:
+                    System.out.println("Invalid action");
+            }
         }
-
-        coffeeMachine.printState();
     }
 }
